@@ -1,4 +1,4 @@
-:root{
+:root {
   font-family: "Play", sans-serif;
   font-weight: 400;
   font-style: normal;
@@ -19,6 +19,32 @@ body {
   box-sizing: border-box;
 }
 
+.header {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  min-width: 320px;
+  min-height: 80px;
+  padding: 15px;
+}
+
+.header__message {
+  background: 'white';
+  border-width: 2px;
+  border-style: solid;
+  border-color: #C2EDEF;
+  border-radius: 5px;
+}
+
+.header__help {
+  width: 30px;
+  height: 30px;
+  border-width: 2px;
+  border-style: 'solid';
+  border-color: 'black';
+  border-radius: '50%';
+}
+
 .board {
   width: fit-content;
   margin: 40px auto;
@@ -37,7 +63,7 @@ body {
   border: 2px solid #C2EDEF;
 }
 
-.square{
+.square {
   width: 40px;
   height: 40px;
   border: 2px solid #C2EDEF;
@@ -47,7 +73,7 @@ body {
   cursor: pointer;
 }
 
-.board button{
+.board button {
   padding: 8px 12px;
   margin: 25px;
   background: transparent;
@@ -61,7 +87,7 @@ body {
 }
 
 .board button:hover {
-  background: #7EB9F0;  
+  background: #7EB9F0;
   color: #222;
 }
 
@@ -74,7 +100,7 @@ body {
   position: relative;
 }
 
-.turn .square{
+.turn .square {
   width: 50px;
   height: 50px;
   pointer-events: none;

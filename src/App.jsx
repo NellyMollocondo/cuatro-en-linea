@@ -1,20 +1,23 @@
-import { useState } from 'react'
+import { useState } from 'react';
 import { Square } from './components/Square';
+import { Message } from './components/Message';
 import { TURNS } from './constants';
 import { checkWinnerFrom, checkEndGame } from './logic/board';
-import { getGameToStorage, getTurnFromStorage, saveGameToStorage, resetGameStorage } from './logic/storage';
+import { saveGameToStorage, resetGameStorage } from './logic/storage';
 import { WinnerModal } from './components/WinnerModal';
 
 function App() {
+  const [showMessage, setShowMessage] = useState(false)
 
   const [board, setBoard] = useState(() => {
-    const boardFromStorage = getGameToStorage();
+    const boardFromStorage = window.localStorage.getItem('board')
+
     if (boardFromStorage) return JSON.parse(boardFromStorage)
-    return Array(42).fill(null);
+    else return Array(42).fill(null);
   });
 
   const [turn, setTurn] = useState(() => {
-    const turnFromStorage = getTurnFromStorage();
+    const turnFromStorage = window.localStorage.getItem('turn')
     return turnFromStorage ?? TURNS.azul;
   });
 
@@ -28,11 +31,10 @@ function App() {
     resetGameStorage();
   }
 
-  function changeTurn() {
-    const newTurn = turn === TURNS.azul ? TURNS.verde : TURNS.azul
-    setTurn(newTurn)
-    return turn
-  }
+  function handleClick(){
+    const newShowMessage = showMessage=='true' ? null : 'true';
+    setShowMessage(newShowMessage) ;
+  } 
 
   function updateBoard(index) {
     if (board[index] || winner) return
@@ -43,12 +45,15 @@ function App() {
     }
 
     const newBoard = [...board]
-    newBoard[index] = changeTurn()
+    newBoard[index] = turn
     setBoard(newBoard)
+
+    const newTurn = turn === TURNS.azul ? TURNS.verde : TURNS.azul
+    setTurn(newTurn)
 
     saveGameToStorage({
       board: newBoard,
-      turn: changeTurn()
+      turn: newTurn
     })
 
     const newWinner = checkWinnerFrom(newBoard)
@@ -58,41 +63,48 @@ function App() {
       setWinner(false)
     }
 
-
   }
 
   return (
-    <main className="board">
-      <h1>Cuatro en línea</h1>
-      <section className="game">
-        {
-          board.map((square, index) => {
-            return (
-              <Square
-                key={index}
-                index={index}
-                updateBoard={updateBoard}>
-                {square}
-              </Square>
+    <>
+      <header className='header'>
+        <span className='header__help' onClick={handleClick}>🕹️</span>
+        {showMessage && <Message />}
+      </header>
 
-            )
-          })
-        }
-      </section>
+      <main className="board">
 
-      <button onClick={resetGame}>Reset del juego</button>
+        <h1>Cuatro en línea</h1>
+        <section className="game">
+          {
+            board.map((square, index) => {
+              return (
+                <Square
+                  key={index}
+                  index={index}
+                  updateBoard={updateBoard}>
+                  {square}
+                </Square>
 
-      <section className='turn'>
-        <Square isSelected={turn === TURNS.azul}>
-          {TURNS.azul}
-        </Square>
-        <Square isSelected={turn === TURNS.verde}>
-          {TURNS.verde}
-        </Square>
-      </section>
+              )
+            })
+          }
+        </section>
 
-      <WinnerModal resetGame={resetGame} winner={winner} />
-    </main>
+        <button onClick={resetGame}>Reset del juego</button>
+
+        <section className='turn'>
+          <Square isSelected={turn === TURNS.azul}>
+            {TURNS.azul}
+          </Square>
+          <Square isSelected={turn === TURNS.verde}>
+            {TURNS.verde}
+          </Square>
+        </section>
+
+        <WinnerModal resetGame={resetGame} winner={winner} />
+      </main>
+    </>
   )
 }
 
